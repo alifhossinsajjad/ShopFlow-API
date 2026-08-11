@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import rateLimit from "express-rate-limit";
 import userRoutes from "./app/modules/users/user.route";
+import authRoutes from "./app/modules/auth/auth.route";
 import categoryRoutes from "./app/modules/categories/category.route";
 import productRoutes from "./app/modules/products/product.route";
 import orderRoutes from "./app/modules/orders/order.route";
@@ -23,6 +24,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);

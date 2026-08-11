@@ -20,6 +20,11 @@ export const getUserById = async (
   next: NextFunction,
 ) => {
   try {
+    const reqUser = (req as any).user;
+    if (reqUser.role !== "admin" && reqUser.id !== Number(req.params.id)) {
+      return res.status(403).json({ success: false, message: "Forbidden access" });
+    }
+
     const user = await UserService.getUserById(Number(req.params.id));
     if (!user) {
       return res
@@ -57,6 +62,11 @@ export const updateUser = async (
   next: NextFunction,
 ) => {
   try {
+    const reqUser = (req as any).user;
+    if (reqUser.role !== "admin" && reqUser.id !== Number(req.params.id)) {
+      return res.status(403).json({ success: false, message: "Forbidden access" });
+    }
+
     const updatedUser = await UserService.updateUser(
       Number(req.params.id),
       req.body,

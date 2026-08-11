@@ -1,9 +1,10 @@
 import pool from "../../config/db";
+import bcrypt from "bcrypt";
 
 // Example service: Get all users
 export const getAllUsers = async () => {
   const result = await pool.query(
-    "SELECT id, name, email, age, phone, address, created_at FROM users",
+    "SELECT id, name, email, role, age, phone, address, created_at FROM users",
   );
   return result.rows;
 };
@@ -11,7 +12,7 @@ export const getAllUsers = async () => {
 // Example service: Get single user
 export const getUserById = async (id: number) => {
   const result = await pool.query(
-    "SELECT id, name, email, age, phone, address, created_at FROM users WHERE id = $1",
+    "SELECT id, name, email, role, age, phone, address, created_at FROM users WHERE id = $1",
     [id]
   );
   return result.rows[0];
@@ -20,6 +21,8 @@ export const getUserById = async (id: number) => {
 export interface IUser {
   name: string;
   email: string;
+  password?: string;
+  role?: string;
   age?: number;
   phone?: string;
   address?: string;
@@ -27,27 +30,36 @@ export interface IUser {
 
 // Example service: Create a user
 export const createUser = async (userData: IUser) => {
-  const { name, email, age, phone, address } = userData;
+  const { name, email, password, role = "user", age, phone, address } = userData;
+  
+  if (!password) {
+    throw new Error("Password is required");
+  }
+
+  // Hash password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   const result = await pool.query(
-    "INSERT INTO users (name, email, age, phone, address) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, email",
-    [name, email, age, phone, address],
+    "INSERT INTO users (name, email, password, role, age, phone, address) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, email, role",
+    [name, email, hashedPassword, role, age, phone, address],
   );
   return result.rows[0];
 };
 
 // Example service: Update a user
 export const updateUser = async (id: number, userData: Partial<IUser>) => {
-  const { name, email, age, phone, address } = userData;
+  const { name, email, role, age, phone, address } = userData;
   const result = await pool.query(
     `UPDATE users 
      SET name = COALESCE($1, name), 
          email = COALESCE($2, email), 
-         age = COALESCE($3, age), 
-         phone = COALESCE($4, phone), 
-         address = COALESCE($5, address),
+         role = COALESCE($3, role),
+         age = COALESCE($4, age), 
+         phone = COALESCE($5, phone), 
+         address = COALESCE($6, address),
          updated_at = NOW() 
-     WHERE id = $6 RETURNING id, name, email`,
-    [name, email, age, phone, address, id]
+     WHERE id = $7 RETURNING id, name, email, role`,
+    [name, email, role, age, phone, address, id]
   );
   return result.rows[0];
 };
