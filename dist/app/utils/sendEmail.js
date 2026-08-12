@@ -30,7 +30,7 @@ const sendEmail = (to, resetLink) => __awaiter(void 0, void 0, void 0, function*
         },
     });
     const mailOptions = {
-        from: '"E-Commerce Support" <support@ecommerce.com>', // sender address
+        from: '"E-Commerce Support" <support@your-ecommerce.com>', // sender address
         to, // list of receivers
         subject: "Password Reset Link", // Subject line
         text: `You requested a password reset. Click the following link to reset your password: ${resetLink}. This link is valid for 15 minutes.`, // plain text body

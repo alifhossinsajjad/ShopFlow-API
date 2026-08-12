@@ -20,7 +20,9 @@ const sendEmail_1 = require("../../utils/sendEmail");
 const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = payload;
     // 1. Check if user exists
-    const result = yield db_1.default.query("SELECT * FROM users WHERE email = $1", [email]);
+    const result = yield db_1.default.query("SELECT * FROM users WHERE email = $1", [
+        email,
+    ]);
     const user = result.rows[0];
     if (!user) {
         throw new Error("User not found");
@@ -54,7 +56,9 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
 exports.loginUser = loginUser;
 const forgetPassword = (email) => __awaiter(void 0, void 0, void 0, function* () {
     // 1. Check if user exists
-    const result = yield db_1.default.query("SELECT * FROM users WHERE email = $1", [email]);
+    const result = yield db_1.default.query("SELECT * FROM users WHERE email = $1", [
+        email,
+    ]);
     const user = result.rows[0];
     if (!user) {
         throw new Error("User not found");
@@ -83,7 +87,9 @@ const resetPassword = (payload) => __awaiter(void 0, void 0, void 0, function* (
         throw new Error("Invalid token");
     }
     // 2. Check if user exists
-    const result = yield db_1.default.query("SELECT * FROM users WHERE email = $1", [decoded.email]);
+    const result = yield db_1.default.query("SELECT * FROM users WHERE email = $1", [
+        decoded.email,
+    ]);
     const user = result.rows[0];
     if (!user) {
         throw new Error("User not found");
@@ -99,7 +105,10 @@ const resetPassword = (payload) => __awaiter(void 0, void 0, void 0, function* (
     // 4. Hash new password
     const hashedPassword = yield bcrypt_1.default.hash(newPassword, 10);
     // 5. Update user password in the database
-    yield db_1.default.query("UPDATE users SET password = $1 WHERE email = $2", [hashedPassword, user.email]);
+    yield db_1.default.query("UPDATE users SET password = $1 WHERE email = $2", [
+        hashedPassword,
+        user.email,
+    ]);
     return { message: "Password has been reset successfully" };
 });
 exports.resetPassword = resetPassword;

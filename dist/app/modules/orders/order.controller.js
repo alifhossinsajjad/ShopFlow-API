@@ -58,10 +58,14 @@ const getOrderById = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     try {
         const order = yield OrderService.getOrderById(Number(req.params.id));
         if (!order)
-            return res.status(404).json({ success: false, message: "Order not found" });
+            return res
+                .status(404)
+                .json({ success: false, message: "Order not found" });
         const reqUser = req.user;
         if (reqUser.role !== "admin" && order.user_id !== reqUser.id) {
-            return res.status(403).json({ success: false, message: "Forbidden access" });
+            return res
+                .status(403)
+                .json({ success: false, message: "Forbidden access" });
         }
         res.status(200).json({ success: true, data: order });
     }
@@ -75,7 +79,13 @@ const createOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         const reqUser = req.user;
         req.body.user_id = reqUser.id; // Enforce user_id from token
         const newOrder = yield OrderService.createOrder(req.body);
-        res.status(201).json({ success: true, data: newOrder, message: "Order created successfully" });
+        res
+            .status(201)
+            .json({
+            success: true,
+            data: newOrder,
+            message: "Order created successfully",
+        });
     }
     catch (error) {
         next(error);
@@ -86,8 +96,16 @@ const updateOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     try {
         const updatedOrder = yield OrderService.updateOrder(Number(req.params.id), req.body);
         if (!updatedOrder)
-            return res.status(404).json({ success: false, message: "Order not found" });
-        res.status(200).json({ success: true, data: updatedOrder, message: "Order updated successfully" });
+            return res
+                .status(404)
+                .json({ success: false, message: "Order not found" });
+        res
+            .status(200)
+            .json({
+            success: true,
+            data: updatedOrder,
+            message: "Order updated successfully",
+        });
     }
     catch (error) {
         next(error);
@@ -98,8 +116,12 @@ const deleteOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     try {
         const isDeleted = yield OrderService.deleteOrder(Number(req.params.id));
         if (!isDeleted)
-            return res.status(404).json({ success: false, message: "Order not found" });
-        res.status(200).json({ success: true, message: "Order deleted successfully" });
+            return res
+                .status(404)
+                .json({ success: false, message: "Order not found" });
+        res
+            .status(200)
+            .json({ success: true, message: "Order deleted successfully" });
     }
     catch (error) {
         next(error);
