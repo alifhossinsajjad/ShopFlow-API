@@ -6,7 +6,9 @@ export const loginUser = async (payload: any) => {
   const { email, password } = payload;
 
   // 1. Check if user exists
-  const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+  const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+    email,
+  ]);
   const user = result.rows[0];
 
   if (!user) {
@@ -47,7 +49,9 @@ export const loginUser = async (payload: any) => {
 
 export const forgetPassword = async (email: string) => {
   // 1. Check if user exists
-  const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+  const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+    email,
+  ]);
   const user = result.rows[0];
 
   if (!user) {
@@ -65,7 +69,8 @@ export const forgetPassword = async (email: string) => {
   const token = jwt.sign(payload, secret, { expiresIn: "15m" });
 
   // 3. Construct reset link
-  const uiLink = process.env.RESET_PASS_UI_LINK || "http://localhost:3000/reset-password";
+  const uiLink =
+    process.env.RESET_PASS_UI_LINK || "http://localhost:3000/reset-password";
   const resetLink = `${uiLink}?token=${token}`;
 
   // 4. Send email
@@ -84,7 +89,9 @@ export const resetPassword = async (payload: any) => {
   }
 
   // 2. Check if user exists
-  const result = await pool.query("SELECT * FROM users WHERE email = $1", [decoded.email]);
+  const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+    decoded.email,
+  ]);
   const user = result.rows[0];
 
   if (!user) {
@@ -103,7 +110,10 @@ export const resetPassword = async (payload: any) => {
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
   // 5. Update user password in the database
-  await pool.query("UPDATE users SET password = $1 WHERE email = $2", [hashedPassword, user.email]);
+  await pool.query("UPDATE users SET password = $1 WHERE email = $2", [
+    hashedPassword,
+    user.email,
+  ]);
 
   return { message: "Password has been reset successfully" };
 };
